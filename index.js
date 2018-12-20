@@ -2,8 +2,12 @@ let fs = require('fs')
 let axios = require('axios')
 let cheerio = require('cheerio')
 
-
+/**
+ * juejina 全部链接
+ * juejinItem 迭代中的单个元素
+ */
 let juejina = []
+let juejinItem = {}
 
 function reptile() {
   axios.get('https://juejin.im/welcome/frontend')
@@ -15,14 +19,17 @@ function reptile() {
       title.map(res => {
         if (title[res].name == 'a') {
           console.log(title[res], '----------------------');
-          juejina.push(title[res])
+          juejinItem = {
+            title: title[res].children[0].data,
+            url: `https://juejin.im${title[res].attribs.href}`
+          }
+          juejina.push(juejinItem)
         }
       })
     })
     .then(() => {
       console.log(juejina);
-
-      // writeHTML(juejina, './juejin.html')
+      writeHTML(JSON.stringify(juejina), './juejin.json')
     })
     .catch(res => {
       console.log(res);
